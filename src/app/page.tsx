@@ -120,7 +120,7 @@ export default async function Home() {
                     </div>
                     <div className="poppins sm:text-[36px] font-[700] lg:text-[48px]">
                         <h2 className="">
-                            L'EAU LAURISSI
+                            L&apos;EAU LAURISSI
                         </h2>
                     </div>
                     <div className="poppins font-[400] text-[20px] sm:pb-10 sm:pt-4 lg:pt-6 ">

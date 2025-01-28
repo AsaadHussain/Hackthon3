@@ -4,13 +4,14 @@ import Navbar from "../../components/Navbar"
 import Image from "next/image"
 import { useState } from "react"
 
+type RadioButton = "bankTransfer" | "COD" | "mobilepay";
 
 
 export default function Checkout() {
 
-    const [radioSelect, setRadioSelect] = useState(null)
-    const handleRadio = (option: any) => {
-        setRadioSelect(option)
+    const [radioSelect, setRadioSelect] = useState<RadioButton | null>(null)
+    const handleRadio = (value: RadioButton) => {
+        setRadioSelect(value)
     }
 
     return (
