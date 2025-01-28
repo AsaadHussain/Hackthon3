@@ -11,8 +11,15 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-      },
+      }
     },
+    screens: {
+      sm: "300px",
+      md: "600px",
+      lg: "800px",
+      big: "1040px",
+      xl: "1300px"
+    }
   },
   plugins: [],
 };
