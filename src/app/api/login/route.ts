@@ -20,6 +20,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ message: "Invalid credentials" }, { status: 401 });
   } catch (error) {
-    return NextResponse.json({ message: "Server error" }, { status: 500 });
+    return NextResponse.json({ message: "Server error", error }, { status: 500 });
   }
 }
