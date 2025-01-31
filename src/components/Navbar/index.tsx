@@ -4,8 +4,8 @@
 import Link from "next/link"
 import styles from '@/components/Navbar/header.module.css';
 import Image from "next/image";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 type NavbarProps = {
     isHome?: boolean
@@ -14,6 +14,25 @@ type NavbarProps = {
 export default function Navbar({ isHome = false }: NavbarProps) {
 
     const [drawer, setDrawer] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+    const pathname = usePathname();
+
+
+    const checkAuth = async () => {
+        try {
+            const res = await fetch("/api/check", { cache: "no-store" });
+            const data = await res.json();
+            setIsAuthenticated(data.isAuthenticated);
+        } catch (error) {
+            console.error("Error checking auth:", error);
+        }
+    };
+
+    useEffect(() => {
+        checkAuth();
+    }, [pathname]);
+
 
     const handleDrawer = () => {
         setDrawer(!drawer);
@@ -33,10 +52,15 @@ export default function Navbar({ isHome = false }: NavbarProps) {
                     <ul className="poppins flex flex-col space-y-5 items-center justify-center text-black text-[16px] font-[500] mt-20">
                         <li className=""><Link href="/">Home</Link></li>
                         <li className=""><Link href="/shop">Shop</Link></li>
-                        <li className=""><Link href="/blog">About</Link></li>
+                        {
+                            isAuthenticated ? <li className=""><Link href="/studio">Studio</Link></li> : <li className=""><Link href="/blog">Blog</Link></li>
+                        }
                         <li className=""><Link href='/contact'>Contact</Link></li>
                         <li className=""><Link href="/account"><i className="fa-solid fa-user"></i></Link></li>
-                        <li className=""><Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link></li>
+                        {
+                            isAuthenticated ? <li className=""><Link href="/adminA"><i className="fa-solid fa-screwdriver-wrench"></i></Link></li> : <li className=""><Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link></li>
+                        }
+
                         <li className=""><i className="fa-regular fa-heart"></i></li>
                         <li className=""><Link href="/cart"><i className="fa-solid fa-cart-shopping"></i></Link></li>
 
@@ -50,14 +74,20 @@ export default function Navbar({ isHome = false }: NavbarProps) {
                     <ul className="poppins flex lg:space-x-2 big:space-x-8 xl:space-x-14 font-[500] lg:text-[11px] big:text-[13px] xl:text-[16px] text-black">
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/">Home</Link></li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/shop">Shop</Link></li>
-                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/blog">About</Link></li>
+                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer">
+                            {
+                                isAuthenticated ? <Link href="/studio">Studio</Link> : <Link href="/blog">Blog</Link>
+                            }</li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href='/contact'>Contact</Link></li>
                     </ul>
                 </div>
                 <div className="sm:hidden lg:block pr-20 w-1/3">
                     <ul className="flex justify-end lg:space-x-2 big:space-x-6 xl:space-x-8 text-black">
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/account"><i className="fa-solid fa-user"></i></Link></li>
-                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link></li>
+                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer">
+                            {
+                                isAuthenticated ? <Link href="/adminA"><i className="fa-solid fa-screwdriver-wrench"></i></Link> : <Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link>
+                            }</li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><i className="fa-regular fa-heart"></i></li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/cart"><i className="fa-solid fa-cart-shopping"></i></Link></li>
                     </ul>

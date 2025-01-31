@@ -52,7 +52,7 @@ export default function Shop() {
         return (
             <>
                 <Navbar isHome={false} />
-                <div>Loading...</div>;
+                <div className="flex items-center justify-center text-[34px] font-[600] min-h-screen">Loading...</div>
             </>
         )
 
