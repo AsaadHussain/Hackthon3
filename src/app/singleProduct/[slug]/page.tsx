@@ -76,8 +76,6 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
         setShowModal(true);
     };
 
-
-
     return (
         <>
             <Navbar isHome={false} />

@@ -88,7 +88,7 @@ export default function Modal({ isVisible, onClose }: ModalProps) {
 
         <div className="h-[10%] sm:px-5 lg:px-7 w-full flex items-center justify-start gap-20">
           <div>
-            <p className="font-[400] sm:text-[12px] lg:text-[16px]">Subtotal</p>
+            <p className="font-[400] sm:text-[12px] lg:text-[16px]">Total</p>
           </div>
           <div>
             <p className="font-[600] sm:text-[12px] lg:text-[16px] text-[#b88e2f]">Rs. {totalPrice}</p>
