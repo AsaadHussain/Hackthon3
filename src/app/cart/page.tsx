@@ -3,8 +3,24 @@
 import Link from "next/link"
 import Navbar from "../../components/Navbar"
 import Image from "next/image"
+import { productsData } from "@/context/data/context"
+import { useContext } from "react"
 
 export default function Cart() {
+
+    const { cart, setCart } = useContext(productsData) || {};
+
+    const totalPrice = cart?.reduce((acc, product) => acc + product.price * (product.quantity ?? 1), 0) || 0;
+
+    const handleRemoveFromCart = (index: number) => {
+        if (!setCart) return;
+
+        setCart((prevCart) => {
+            return prevCart.filter((_, idx) => idx !== index);
+        });
+    };
+
+
     return (
         <>
             <Navbar isHome={false} />
@@ -27,50 +43,71 @@ export default function Cart() {
             <div className="w-full flex sm:flex-col big:flex-row items-start justify-evenly
             sm:px-1 sm:py-2 md:px-10 md:py-10 lg:px-10 lg:py-16 big:gap-2 xl:gap-0">
                 <div className="sm:w-[95%] md:w-full xl:w-auto poppins overflow-x-auto">
-                    <table className="scrollbar table-auto border-collapse border-transparent text-left">
-                        <thead className="">
-                            <tr className=" bg-[#fff9ef]">
-                                <th className="sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent"></th>
-                                <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Product</th>
-                                <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Price</th>
-                                <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Quantity</th>
-                                <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Subtotal</th>
-                                <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent"></th>
-                            </tr>
-                        </thead>
-                        <tbody className="">
-                            <tr className=" bg-white hover:bg-gray-100">
-                                <td className="pl-0 sm:pr-3 md:pr-6 sm:py-2 md:py-10 border border-transparent">
-                                    <div className="flex items-center justify-center bg-[#fbebb5] p-0 m-0
-                                    rounded-lg sm:w-[50px] sm:h-[50px] md:w-[105px] md:h-[105px]">
-                                        <Image className="w-[85%] h-auto" src="/attar7.webp" alt="" width={400} height={300} />
-                                    </div>
-                                </td>
-                                <td className="text-[#9f9f9f] sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Asgaard sofa</td>
-                                <td className="text-[#9f9f9f] sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Rs. 250,000.00</td>
-                                <td className="sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent"><div className="flex items-center justify-center rounded-[5px] w-[32px] h-[32px] border-[2px] border-[#9f9f9f]">1</div></td>
-                                <td className="sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Rs. 250,000.00</td>
-                                <td className="text-[#fbebb5] text-[18px] font-[400] sm:px-1 sm:py-2 lg:px-6 lg:py-4 border border-transparent"><i className="fa-solid fa-trash"></i></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    {cart && cart.length > 0 ? (
+                        <table className="scrollbar table-auto border-collapse border-transparent text-left">
+                            <thead>
+                                <tr className=" bg-[#fff9ef]">
+                                    <th className="sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent"></th>
+                                    <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Product</th>
+                                    <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Price</th>
+                                    <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Quantity</th>
+                                    <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Subtotal</th>
+                                    <th className="sm:text-[12px] md:text-[16px] font-[500] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cart.map((product,index) => (
+                                    <tr key={product._id} className="bg-white hover:bg-gray-100">
+                                        <td className="pl-0 sm:pr-3 md:pr-6 sm:py-2 md:py-10 border border-transparent">
+                                            <div className="flex items-center justify-center bg-[#fbebb5] p-0 m-0 rounded-lg sm:w-[50px] sm:h-[50px] md:w-[105px] md:h-[105px]">
+                                                <Image className="w-[85%] h-auto" src={product.image_url} alt="" width={400} height={300} />
+                                            </div>
+                                        </td>
+                                        <td className="text-[#9f9f9f] sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">{product.product_name}</td>
+                                        <td className="text-[#9f9f9f] sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">Rs. {product.price}</td>
+                                        <td className="sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">
+                                            <div className="flex items-center justify-center rounded-[5px] w-[32px] h-[32px] border-[2px] border-[#9f9f9f]">
+                                                {product.quantity}
+                                            </div>
+                                        </td>
+                                        <td className="sm:text-[12px] md:text-[16px] font-[400] sm:px-1 sm:py-2 md:px-6 md:py-4 border border-transparent">
+                                            Rs. {product.price * (product.quantity ?? 1)}
+                                        </td>
+                                        <td className="text-[#fbebb5] text-[18px] font-[400] sm:px-1 sm:py-2 lg:px-6 lg:py-4 border border-transparent">
+                                            <i onClick={() => handleRemoveFromCart(index)} className="hover:cursor-pointer fa-solid fa-trash"></i>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    ) : (
+                        <p className="overflow-hidden flex items-center justify-center poppins font-[500] sm:text-sm md:text-2xl m-4">
+                            The cart is empty
+                        </p>
+                    )}
                 </div>
 
-                <div className="sm:h-[300px] lg:h-[400px] flex flex-col items-center justify-between
+                <div className="h-fit flex flex-col items-center justify-between
                  poppins bg-[#fff9ef] sm:px-8 lg:px-16 py-2 sm:my-10 lg:my-0">
                     <div className="py-2 text-[32px] font-[600]">
                         <h3>Cart Totals</h3>
                     </div>
+
                     <div className="py-3 w-full flex flex-col items-center justify-center">
-                        <div className="py-2 w-full flex items-center justify-between">
-                            <p className="text-[16px] font-[500]">Subtotal</p>
-                            <p className="text-[#9f9f9f] text-[16px] font-[400]">Rs. 250,000.00</p>
-                        </div>
+                        {
+                            cart?.map((product) => (
+                                <div key={product._id} className="py-2 w-full flex items-center justify-between">
+                                    <p className="text-[16px] font-[500]">Subtotal</p>
+                                    <p className="text-[#9f9f9f] text-[16px] font-[400]">Rs. {product.price * (product.quantity ?? 1)}</p>
+                                </div>
+                            ))
+                        }
                         <div className="py-3 w-full flex items-center justify-between">
                             <p className="text-[16px] font-[500]">Total</p>
-                            <p className="text-[#b88e2f]  text-[20px] font-[500]">Rs. 250,000.00</p>
+                            <p className="text-[#b88e2f]  text-[20px] font-[500]">Rs. {totalPrice}</p>
                         </div>
                     </div>
+
                     <div className="sm:pb-1 lg:pb-16 pt-0 flex items-center justify-center w-full">
                         <Link href="/checkout"><button className="border-[1px]
                          border-[#000000] rounded-[12px] py-[15px] px-[62px] mt-[5px] poppins font-[400]

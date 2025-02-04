@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Footer from "../components/Footer/page";
+import DataProvider from "@/context/data/data";
 
 const pops = Poppins({
   subsets: ['latin'],
@@ -36,8 +37,10 @@ export default function RootLayout({
       <body
         className={`${pops.variable} ${geistMono.variable} antialiased`}
       >
+        <DataProvider>
           {children}
-          <Footer />
+        </DataProvider>
+        <Footer />
       </body>
     </html>
   );

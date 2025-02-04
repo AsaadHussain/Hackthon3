@@ -56,7 +56,7 @@ export default async function Home() {
                         </h1>
                     </div>
                     <div className="poppins font-[500] sm:text-[20px] xl:text-[24px] sm:py-3 md:pt-5">
-                        <Link href='/singleProduct'>
+                        <Link href='/shop'>
                             <button className="sm:border-b-[2px] md:border-b-[3px] border-black pb-2">
                                 View More
                             </button>
@@ -73,7 +73,7 @@ export default async function Home() {
                         </h1>
                     </div>
                     <div className="poppins font-[500] sm:text-[20px] xl:text-[24px] sm:py-3 md:pt-5">
-                        <Link href='/singleProduct'>
+                        <Link href='/shop'>
                             <button className="sm:border-b-[2px] md:border-b-[3px] border-black pb-2">
                                 View More
                             </button>

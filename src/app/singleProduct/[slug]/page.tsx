@@ -1,27 +1,13 @@
 'use client'
 
-import React, { useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import ProductCard from "@/components/ProducrCard/page";
 import Modal from "../../../components/Modal";
 import Navbar from "../../../components/Navbar";
 import Link from "next/link";
-import { getAllProducts } from "../../../../scripts/fetchProducts";
 import CommentsSection from "@/components/Comment/page";
 import Image from "next/image";
-
-interface Product {
-    _id: string;
-    product_name: string;
-    price: number;
-    description: string;
-    size: number;
-    category: string;
-    tags: string[];
-    stock_quantity: number;
-    image_url: string;
-    rating: number;
-    slug: string;
-}
+import { productsData } from "@/context/data/context";
 
 type singleProductProp = {
     params: {
@@ -31,26 +17,12 @@ type singleProductProp = {
 
 export default function SingleProduct({ params: { slug } }: singleProductProp) {
 
+    const { products, cart, setCart } = useContext(productsData) || {};
+
     const [showModal, setShowModal] = useState(false);
-    const [count, setCount] = useState(0);
-    const [products, setProducts] = useState<Product[]>([]);
+    const [count, setCount] = useState(1);
     const [like, setLike] = useState(false);
     const [rating, setRating] = useState(0);
-
-    useEffect(() => {
-        async function fetchProducts() {
-            const fetchedProducts = await getAllProducts();
-            setProducts(fetchedProducts);
-        }
-        fetchProducts();
-    }, []);
-
-    const AddCount = () => {
-        setCount(count + 1);
-    }
-    const SubCount = () => {
-        setCount(count - 1);
-    }
 
     const handleLike = () => {
         setLike(!like);
@@ -73,6 +45,11 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
         )
     }
 
+    const handleAddToCart = () => {
+        if (!setCart) return;
+        setCart([...cart!, { ...product, quantity: count }]);
+        setShowModal(true)
+    };
 
     return (
         <>
@@ -158,14 +135,14 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
                         <div className="
                         flex items-center justify-around border-[1px] border-[#9f9f9f]
                         rounded-lg py-[19px] px-1 poppins font-[500] text-[16px] w-[35%]">
-                            <button onClick={SubCount}>-</button>
+                            <button onClick={() => setCount((prev) => Math.max(1, prev - 1))}>-</button>
                             <button>{count}</button>
-                            <button onClick={AddCount}>+</button>
+                            <button onClick={() => setCount((prev) => prev + 1)}>+</button>
                         </div>
 
                         <button className="flex items-center justify-around border-[1px]
                          border-[#000000] rounded-[12px] py-[15px] px-[20px] ml-4 w-[60%] poppins font-[400]
-                          text-[20px]" onClick={() => setShowModal(true)}>
+                          text-[20px]" onClick={handleAddToCart}>
                             Add To Cart
                         </button>
                     </div>
@@ -215,9 +192,13 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
                 </div>
                 <div className="flex sm:flex-col md:flex-wrap md:flex-row items-center justify-center sm:pt-10 xl:pt-24 pb-3 gap-2">
                     {
-                        products.slice(0, 4).map((product) => (
-                            <ProductCard key={product._id} product={product} />
-                        ))
+                        products
+                            ?.filter((item) => item.category === product.category && item._id !== product._id)
+                            .sort(() => Math.random() - 0.9)
+                            .slice(0, 4)
+                            .map((filteredProduct) => (
+                                <ProductCard key={filteredProduct._id} product={filteredProduct} />
+                            ))
                     }
                 </div>
                 <div className="poppins font-[500] text-[24px] py-10 ">
