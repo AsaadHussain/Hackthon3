@@ -45,11 +45,38 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
         )
     }
 
+    // const handleAddToCart = () => {
+    //     if (!setCart) return;
+    //     setCart([...cart!, { ...product, quantity: count }]);
+    //     setShowModal(true)
+    // };
+
     const handleAddToCart = () => {
-        if (!setCart) return;
-        setCart([...cart!, { ...product, quantity: count }]);
-        setShowModal(true)
+        if (!setCart || !cart) return;
+
+        const existingProductIndex = cart.findIndex((item) => item._id === product._id);
+
+        if (existingProductIndex !== -1) {
+    
+            const updatedCart = [...cart];
+            const existingProduct = updatedCart[existingProductIndex];
+
+            if (existingProduct) {
+                updatedCart[existingProductIndex] = {
+                    ...existingProduct,
+                    quantity: (existingProduct.quantity ?? 1) + count
+                }
+                setCart(updatedCart);
+            }
+        } else {
+    
+            setCart([...cart, { ...product, quantity: count }]);
+        }
+
+        setShowModal(true);
     };
+
+
 
     return (
         <>

@@ -2,14 +2,21 @@
 import Link from "next/link"
 import Navbar from "../../components/Navbar"
 import Image from "next/image"
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { productsData } from "@/context/data/context"
 
 type RadioButton = "bankTransfer" | "COD" | "mobilepay";
 
 
 export default function Checkout() {
 
+    const { cart} = useContext(productsData) || {};
+
+    const totalPrice = cart?.reduce((acc, product) => acc + product.price * (product.quantity ?? 1), 0) || 0;
+
     const [radioSelect, setRadioSelect] = useState<RadioButton | null>(null)
+
+
     const handleRadio = (value: RadioButton) => {
         setRadioSelect(value)
     }
@@ -217,83 +224,106 @@ export default function Checkout() {
                     </div>
                 </div>
 
-                <div className="poppins flex flex-col justify-center items-start
+                {
+                    cart && cart.length > 0 ? (
+                        <div className="poppins flex flex-col justify-center items-start
                  sm:py-8 lg:py-10 m-0 sm:w-[95%] xl:w-1/2 sm:gap-4 lg:gap-6">
-                    <div className=" flex justify-between items-start py-2 m-0 w-full">
-                        <div className="flex flex-col justify-center items-start p-0 m-0 gap-4">
-                            <h3 className="font-[500] sm:text-[18px] lg:text-[24px] py-2">Product</h3>
-                            <p className="text-[#9f9f9f] font-[400] sm:text-[12px] lg:text-[16px]">Asgaard sofa&ensp;<span className="font-[500] text-[12px] text-black">&emsp;X&emsp;1</span></p>
-                            <p className="font-[400] sm:text-[12px] lg:text-[16px]">Subtotal</p>
-                            <p className="font-[400] sm:text-[12px] lg:text-[16px]">Total</p>
-                        </div>
-                        <div className="flex flex-col justify-center items-end p-0 m-0 gap-4">
-                            <h3 className="font-[500] sm:text-[18px] lg:text-[24px] py-2">Subtotal</h3>
-                            <p className="font-[300] sm:text-[12px] lg:text-[16px]">Rs. 250,000.00</p>
-                            <p className="font-[300] sm:text-[12px] lg:text-[16px]">Rs. 250,000.00</p>
-                            <p className="text-[#b88e2f] font-[700] sm:text-[18px] lg:text-[24px]">Rs. 250,000.00</p>
-                        </div>
-                    </div>
 
-                    <hr className="my-1 bg-[#d9d9d9] w-full h-[1.5px]" />
+                            <div className=" flex justify-between items-start py-2 m-0 w-full">
+                                <div className="flex flex-col justify-center items-start p-0 m-0 gap-4">
+                                    <h3 className="font-[500] sm:text-[18px] lg:text-[24px] py-0">Product</h3>
+                                </div>
+                                <div className="flex flex-col justify-center items-end p-0 m-0 gap-4">
+                                    <h3 className="font-[500] sm:text-[18px] lg:text-[24px] py-0">Price</h3>
+                                </div>
+                            </div>
 
-                    <div className="poppins">
-                        <div className=" my-0 pb-6">
-                            <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
-                                <input type="radio" onChange={() => handleRadio("bankTransfer")} checked={radioSelect === "bankTransfer"} />
-                                <p>Direct Bank Transfer</p>
+                            {
+                                cart?.map((product) => (
+                                    <div key={product._id} className=" flex justify-between items-start py-0 m-0 w-full">
+                                        <div className="flex flex-col justify-center items-start p-0 m-0 gap-4">
+                                            <p className="text-[#9f9f9f] font-[400] sm:text-[12px] lg:text-[16px]">{product.product_name}&ensp;<span className="font-[500] text-[12px] text-black">&emsp;X&emsp;{product.quantity}</span></p>
+                                            <p className="font-[400] sm:text-[12px] lg:text-[16px]">Subtotal</p>
+                                        </div>
+                                        <div className="flex flex-col justify-center items-end p-0 m-0 gap-4">
+                                            <p className="font-[300] sm:text-[12px] lg:text-[16px]">Rs. {product.price}</p>
+                                            <p className="font-[300] sm:text-[12px] lg:text-[16px]">Rs. {(product.quantity ?? 1) * product.price}</p>
+                                        </div>
+                                    </div>
+                                ))
+                            }
+                            <div className=" flex justify-between items-start py-1 m-0 w-full">
+                                <div className="flex flex-col justify-center items-start p-0 m-0 gap-4">
+                                    <p className="font-[400] sm:text-[12px] lg:text-[16px]">Total</p>
+                                </div>
+                                <div className="flex flex-col justify-center items-end p-0 m-0 gap-4">
+                                    <p className="text-[#b88e2f] font-[700] sm:text-[18px] lg:text-[24px]">Rs. {totalPrice}</p>
+                                </div>
                             </div>
-                            {radioSelect === "bankTransfer" && (
-                                <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
-                                    Make your payment directly into our bank account. Please use your
-                                    Order ID as the payment reference. Your order will not be shipped
-                                    until the funds have cleared in our account.
-                                </p>
-                            )}
-                        </div>
-                        <div className=" my-0 pb-6">
-                            <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
-                                <input type="radio" onChange={() => handleRadio("mobilepay")} checked={radioSelect === "mobilepay"} />
-                                <p>Mobile Pay</p>
-                            </div>
-                            {radioSelect === "mobilepay" && (
-                                <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
-                                    Make your payment using any mobile and online payment service like google pay,
-                                    samsung pay, apple pay into our bank account. Please use yourOrder ID as the
-                                    payment reference. Your order will not be shipped until the funds have cleared in our account.
-                                </p>
-                            )}
-                        </div>
-                        <div className=" my-0 pb-6">
-                            <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
-                                <input type="radio" onChange={() => handleRadio("COD")} checked={radioSelect === "COD"} />
-                                <p>Cash On Delivery</p>
-                            </div>
-                            {radioSelect === "COD" && (
-                                <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
-                                    Make your payment directly when you recieve your order, feel free to check and
-                                    confirm your order to satisfy yourself. Please use your Order ID as the payment
-                                    reference. Your order will not be shipped until the funds have cleared in our account.
-                                </p>
-                            )}
-                        </div>
-                    </div>
+                            <hr className="my-1 bg-[#d9d9d9] w-full h-[1.5px]" />
 
-                    <div className="p-0 m-0">
-                        <p className="text-[#000] font-[300] text-[16px] text-justify p-0 m-0">
-                            Your personal data will be used to support your experience throughout
-                            this website, to manage access to your account, and for other purposes
-                            described in our <button className="font-[600] text-[16px]">privacy policy</button> .
-                        </p>
-                    </div>
-                    <div className="py-4 flex items-center justify-center w-full">
-                        <Link href="/"><button className="border-[1px]
-                         border-[#000000] rounded-[12px] py-[15px] px-[90px] mt-[6px] poppins font-[400]
-                          text-[20px]">
-                            Place order
-                        </button></Link>
-                    </div>
-                </div>
+                            <div className="poppins">
+                                <div className=" my-0 pb-6">
+                                    <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
+                                        <input type="radio" onChange={() => handleRadio("bankTransfer")} checked={radioSelect === "bankTransfer"} />
+                                        <p>Direct Bank Transfer</p>
+                                    </div>
+                                    {radioSelect === "bankTransfer" && (
+                                        <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
+                                            Make your payment directly into our bank account. Please use your
+                                            Order ID as the payment reference. Your order will not be shipped
+                                            until the funds have cleared in our account.
+                                        </p>
+                                    )}
+                                </div>
+                                <div className=" my-0 pb-6">
+                                    <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
+                                        <input type="radio" onChange={() => handleRadio("mobilepay")} checked={radioSelect === "mobilepay"} />
+                                        <p>Mobile Pay</p>
+                                    </div>
+                                    {radioSelect === "mobilepay" && (
+                                        <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
+                                            Make your payment using any mobile and online payment service like google pay,
+                                            samsung pay, apple pay into our bank account. Please use yourOrder ID as the
+                                            payment reference. Your order will not be shipped until the funds have cleared in our account.
+                                        </p>
+                                    )}
+                                </div>
+                                <div className=" my-0 pb-6">
+                                    <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
+                                        <input type="radio" onChange={() => handleRadio("COD")} checked={radioSelect === "COD"} />
+                                        <p>Cash On Delivery</p>
+                                    </div>
+                                    {radioSelect === "COD" && (
+                                        <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
+                                            Make your payment directly when you recieve your order, feel free to check and
+                                            confirm your order to satisfy yourself. Please use your Order ID as the payment
+                                            reference. Your order will not be shipped until the funds have cleared in our account.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="p-0 m-0">
+                                <p className="text-[#000] font-[300] text-[16px] text-justify p-0 m-0">
+                                    Your personal data will be used to support your experience throughout
+                                    this website, to manage access to your account, and for other purposes
+                                    described in our <button className="font-[600] text-[16px]">privacy policy</button> .
+                                </p>
+                            </div>
+                            <div className="py-4 flex items-center justify-center w-full">
+                                <Link href="/"><button className="border-[1px] border-[#000000] rounded-[12px] py-[15px] px-[90px]
+                                 mt-[6px] poppins font-[400] text-[20px]">
+                                    Place order
+                                </button></Link>
+                            </div>
+                        </div>
+                    ) : (
+                        <h2 className="overflow-hidden flex items-center justify-center poppins font-[500] text-[24px] sm:my-9 big:m-4">Cart is Empty</h2>
+                    )
+                }
             </div>
+
 
             <div className="flex sm:flex-col lg:flex-row lg:items-start big:items-center
             justify-evenly sm:space-y-4 md:space-y-8 lg:space-y-0 lg:space-x-2 sm:py-10
