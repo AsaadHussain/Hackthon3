@@ -32,6 +32,11 @@ export default function CommentsSection() {
         setUserName("");
     };
 
+    const handleDeleteComment = (index: number) => {
+        const updatedComment = comments.filter((_, idx) => idx !== index);
+        setComments(updatedComment)
+    }
+
     return (
         <div className="poppins w-full max-w-3xl mx-auto bg-white p-4 ">
             <h2 className="text-xl font-[400] mb-4">Comments</h2>
@@ -47,6 +52,7 @@ export default function CommentsSection() {
                     placeholder="Write a comment..."
                     className="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:ring-gray-300"
                     rows={3}
+                    maxLength={216}
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                 ></textarea>
@@ -62,15 +68,18 @@ export default function CommentsSection() {
                 {comments.length === 0 ? (
                     <p className="text-gray-500">No comments yet. Be the first to comment!</p>
                 ) : (
-                    comments.map((comment) => (
+                    comments.map((comment, index) => (
                         <div
                             key={comment.id}
-                            className="border-b pb-3 mb-3"
+                            className="border-b pb-3 mb-3 flex items-start justify-between"
                         >
-                            <p className="text-sm text-black font-[400]">
-                                <strong className="text-sm text-black font-[600]">{comment.userName}</strong> - {comment.date}
-                            </p>
-                            <p className="text-gray-800">{comment.text}</p>
+                            <div className="flex flex-col items-start justify-center">
+                                <p className="text-sm text-black font-[400]">
+                                    <strong className="text-sm text-black font-[600]">{comment.userName}</strong> - {comment.date}
+                                </p>
+                                <p className="sm:text-[11px] md:text-[16px] text-gray-800">{comment.text}</p>
+                            </div>
+                            <button onClick={() => handleDeleteComment(index)} className="sm:ml-1"><i className="fa-regular fa-trash-can"></i></button>
                         </div>
                     ))
                 )}

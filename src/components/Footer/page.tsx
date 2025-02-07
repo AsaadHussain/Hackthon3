@@ -30,7 +30,7 @@ export default function Footer() {
                             <ul className=" flex flex-col font-[500] text-[16px] text-black">
                                 <li className="pb-8 hover:text-gray-300 cursor-pointer"><Link href="/">Home</Link></li>
                                 <li className="pb-8 hover:text-gray-300 cursor-pointer"><Link href="/shop">Shop</Link></li>
-                                <li className="pb-8 hover:text-gray-300 cursor-pointer"><Link href="/blog">About</Link></li>
+                                <li className="pb-8 hover:text-gray-300 cursor-pointer"><Link href="/">About</Link></li>
                                 <li className="pb-8 hover:text-gray-300 cursor-pointer"><Link href="/contact">Contact</Link></li>
                             </ul>
                         </div>

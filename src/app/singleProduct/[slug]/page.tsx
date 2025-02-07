@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import ProductCard from "@/components/ProducrCard/page";
 import Modal from "../../../components/Modal";
 import Navbar from "../../../components/Navbar";
@@ -24,8 +24,14 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
     const [like, setLike] = useState(false);
     const [rating, setRating] = useState(0);
 
+    useEffect(() => {
+        if (cart) {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+    }, [cart]); 
+    
     const handleLike = () => {
-        setLike(!like);
+        setLike(!like)
     }
 
     const handleRating = (value: number) => {
@@ -45,19 +51,13 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
         )
     }
 
-    // const handleAddToCart = () => {
-    //     if (!setCart) return;
-    //     setCart([...cart!, { ...product, quantity: count }]);
-    //     setShowModal(true)
-    // };
-
     const handleAddToCart = () => {
         if (!setCart || !cart) return;
 
         const existingProductIndex = cart.findIndex((item) => item._id === product._id);
 
         if (existingProductIndex !== -1) {
-    
+
             const updatedCart = [...cart];
             const existingProduct = updatedCart[existingProductIndex];
 
@@ -69,12 +69,23 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
                 setCart(updatedCart);
             }
         } else {
-    
+
             setCart([...cart, { ...product, quantity: count }]);
         }
 
         setShowModal(true);
     };
+
+    // const handleAddToWishList = () => {
+    //     if (!setWishList || !wishList) return;
+    
+    //     if (!wishList.some((item) => item._id === product._id)) {
+    //         setWishList([...wishList, product]);
+    //     }
+    
+    //     setLike(true);
+    // };
+    
 
     return (
         <>
@@ -199,7 +210,7 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
                                     <i className="fa-brands fa-twitter"></i></p>
                             </div>
                         </div>
-                        <div className="hover:cursor-pointer"><i className={like ? "text-2xl text-red-500 fa-solid fa-heart" : "text-2xl text-red-500 fa-regular fa-heart"} onClick={handleLike}></i></div>
+                        <div className="hover:cursor-pointer"><i onClick={handleLike} className={like ? "text-2xl text-red-500 fa-solid fa-heart" : "text-2xl text-red-500 fa-regular fa-heart"}></i></div>
                     </div>
                 </div>
             </div>
@@ -234,7 +245,7 @@ export default function SingleProduct({ params: { slug } }: singleProductProp) {
                     </Link>
                 </div>
             </div>
-            <Modal isVisible={showModal} onClose={() => setShowModal(!showModal)} />
+            <Modal isVisible={showModal} onClose={() => setShowModal(false)} />
         </>
     )
 }

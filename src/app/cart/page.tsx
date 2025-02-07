@@ -4,20 +4,36 @@ import Link from "next/link"
 import Navbar from "../../components/Navbar"
 import Image from "next/image"
 import { productsData } from "@/context/data/context"
-import { useContext } from "react"
+import { useContext, useEffect, useState } from "react"
 
 export default function Cart() {
 
     const { cart, setCart } = useContext(productsData) || {};
+    const [hydrated, setHydrated] = useState(false);
+
+    useEffect(() => {
+        if (!setCart || !cart) return;
+
+        if (typeof window !== "undefined") {
+            const storedCart = localStorage.getItem("cart");
+            if (storedCart) {
+                setCart(JSON.parse(storedCart));
+            }
+        }
+        setHydrated(true)
+    }, []);
+
+
+    if (!hydrated) return null;
 
     const totalPrice = cart?.reduce((acc, product) => acc + product.price * (product.quantity ?? 1), 0) || 0;
 
     const handleRemoveFromCart = (index: number) => {
-        if (!setCart) return;
+        if (!setCart || !cart) return;
 
-        setCart((prevCart) => {
-            return prevCart.filter((_, idx) => idx !== index);
-        });
+        const updatedCart = cart.filter((_, idx) => idx !== index);
+        setCart(updatedCart);
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
     };
 
 
@@ -56,7 +72,7 @@ export default function Cart() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {cart.map((product,index) => (
+                                {cart.map((product, index) => (
                                     <tr key={product._id} className="bg-white hover:bg-gray-100">
                                         <td className="pl-0 sm:pr-3 md:pr-6 sm:py-2 md:py-10 border border-transparent">
                                             <div className="flex items-center justify-center bg-[#fbebb5] p-0 m-0 rounded-lg sm:w-[50px] sm:h-[50px] md:w-[105px] md:h-[105px]">

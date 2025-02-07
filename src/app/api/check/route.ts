@@ -1,8 +1,11 @@
-import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
-    const authSession = cookies().get("auth_session");
+export async function GET(req: NextRequest) {
+    const authSession = req.cookies.get("auth_session");
 
-    return NextResponse.json({ isAuthenticated: !!authSession });
+    if (authSession) {
+        return NextResponse.json({ isAuthenticated: true });
+    }
+
+    return NextResponse.json({ isAuthenticated: false });
 }

@@ -6,6 +6,7 @@ import styles from '@/components/Navbar/header.module.css';
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 type NavbarProps = {
     isHome?: boolean
@@ -18,6 +19,7 @@ export default function Navbar({ isHome = false }: NavbarProps) {
 
     const pathname = usePathname();
 
+    const { data: session } = useSession();
 
     const checkAuth = async () => {
         try {
@@ -53,15 +55,18 @@ export default function Navbar({ isHome = false }: NavbarProps) {
                         <li className=""><Link href="/">Home</Link></li>
                         <li className=""><Link href="/shop">Shop</Link></li>
                         {
-                            isAuthenticated ? <li className=""><Link href="/studio">Studio</Link></li> : <li className=""><Link href="/blog">Blog</Link></li>
+                            isAuthenticated ? <li className=""><Link href="/studio">Studio</Link></li> : ""
                         }
                         <li className=""><Link href='/contact'>Contact</Link></li>
-                        <li className=""><Link href="/account"><i className="fa-solid fa-user"></i></Link></li>
+                        {
+                            !session ? <li className=""><Link href="/account"><i className="fa-solid fa-user"></i></Link></li> : <li className=""><Link href="/account"><Image className="p-0 m-0 object-cover w-[21px] h-[21px] rounded-full" src={session.user?.image ?? "/usericon.png"} alt="" width={60} height={60} /></Link></li>
+                        }
+
                         {
                             isAuthenticated ? <li className=""><Link href="/adminA"><i className="fa-solid fa-screwdriver-wrench"></i></Link></li> : <li className=""><Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link></li>
                         }
 
-                        <li className=""><i className="fa-regular fa-heart"></i></li>
+                        <li className=""><Link href="/wishList"><i className="fa-regular fa-heart"></i></Link></li>
                         <li className=""><Link href="/cart"><i className="fa-solid fa-cart-shopping"></i></Link></li>
 
                     </ul>
@@ -74,21 +79,24 @@ export default function Navbar({ isHome = false }: NavbarProps) {
                     <ul className="poppins flex lg:space-x-2 big:space-x-8 xl:space-x-14 font-[500] lg:text-[11px] big:text-[13px] xl:text-[16px] text-black">
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/">Home</Link></li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/shop">Shop</Link></li>
-                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer">
-                            {
-                                isAuthenticated ? <Link href="/studio">Studio</Link> : <Link href="/blog">Blog</Link>
-                            }</li>
+                        {
+
+                            isAuthenticated ? <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/studio">Studio</Link></li> : ""
+                        }
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href='/contact'>Contact</Link></li>
                     </ul>
                 </div>
                 <div className="sm:hidden lg:block pr-20 w-1/3">
                     <ul className="flex justify-end lg:space-x-2 big:space-x-6 xl:space-x-8 text-black">
-                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/account"><i className="fa-solid fa-user"></i></Link></li>
+                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer">
+                            {!session ? <Link href="/account"><i className="fa-solid fa-user"></i></Link> :
+                                <Link href="/account"><Image className="p-0 m-0 object-cover w-[22px] h-[22px] rounded-full" src={session.user?.image ?? "/usericon.png"} alt="" width={60} height={60} /></Link>}
+                        </li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer">
                             {
                                 isAuthenticated ? <Link href="/adminA"><i className="fa-solid fa-screwdriver-wrench"></i></Link> : <Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link>
                             }</li>
-                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><i className="fa-regular fa-heart"></i></li>
+                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/wishList"><i className="fa-regular fa-heart"></i></Link></li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/cart"><i className="fa-solid fa-cart-shopping"></i></Link></li>
                     </ul>
                 </div>

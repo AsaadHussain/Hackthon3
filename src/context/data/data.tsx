@@ -6,9 +6,26 @@ import { getAllProducts } from "../../../scripts/fetchProducts";
 
 
 const DataProvider = ({ children }: { children: ReactNode }) => {
-    
+
     const [products, setProducts] = useState<Product[]>([]);
     const [cart, setCart] = useState<Product[]>([]);
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const storedCart = localStorage.getItem("cart");
+            if (storedCart) {
+                setCart(JSON.parse(storedCart));
+            }
+        }
+    }, []);
+
+
+    useEffect(() => {
+        if (cart.length > 0) {
+            localStorage.setItem("cart", JSON.stringify(cart));
+        }
+    }, [cart]);
+
 
     useEffect(() => {
         async function fetchProducts() {

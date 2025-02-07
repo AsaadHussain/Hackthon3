@@ -1,6 +1,6 @@
 
 'use client'
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import Link from "next/link";
 import Image from "next/image";
 import { productsData } from "@/context/data/context";
@@ -14,14 +14,23 @@ export default function Modal({ isVisible, onClose }: ModalProps) {
 
   const { cart, setCart } = useContext(productsData) || {};
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedCart = localStorage.getItem("cart");
+      if (storedCart && setCart) {
+        setCart(JSON.parse(storedCart));
+      }
+    }
+  }, []);
+
   const totalPrice = cart?.reduce((acc, product) => acc + product.price * (product.quantity ?? 1), 0) || 0;
 
   const handleRemoveFromCart = (index: number) => {
-    if (!setCart) return;
+    if (!setCart || !cart) return;
 
-    setCart((prevCart) => {
-      return prevCart.filter((_, idx) => idx !== index);
-    });
+    const updatedCart = cart.filter((_, idx) => idx !== index);
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
 

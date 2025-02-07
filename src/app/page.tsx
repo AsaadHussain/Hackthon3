@@ -156,7 +156,7 @@ export default async function Home() {
                                 </h2>
                             </div>
                             <div className="poppins font-[500] text-[24px] pt-1 pb-3">
-                                <Link href='/blog'>
+                                <Link href='/'>
                                     <button className="border-b-[3px] border-black pb-2">
                                         Read More
                                     </button>
@@ -183,7 +183,7 @@ export default async function Home() {
                                 </h2>
                             </div>
                             <div className="poppins font-[500] text-[24px] pt-1 pb-3">
-                                <Link href='/blog'>
+                                <Link href='/'>
                                     <button className="border-b-[3px] border-black pb-2">
                                         Read More
                                     </button>
@@ -210,7 +210,7 @@ export default async function Home() {
                                 </h2>
                             </div>
                             <div className="poppins font-[500] text-[24px] pt-1 pb-3">
-                                <Link href='/blog'>
+                                <Link href='/'>
                                     <button className="border-b-[3px] border-black pb-2">
                                         Read More
                                     </button>
@@ -229,7 +229,7 @@ export default async function Home() {
                 </div>
 
                 <div className="poppins font-[500] text-[24px] pt-10 pb-3">
-                    <Link href='/blog'>
+                    <Link href='/'>
                         <button className="border-b-[3px] border-black pb-4">
                             View All Post
                         </button>

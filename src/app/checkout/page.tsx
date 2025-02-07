@@ -1,25 +1,91 @@
+
 "use client"
-import Link from "next/link"
+
+import { useRouter } from "next/navigation"
 import Navbar from "../../components/Navbar"
 import Image from "next/image"
-import { useContext, useState } from "react"
-import { productsData } from "@/context/data/context"
+import { useContext, useEffect, useState } from "react"
+import { Product, productsData } from "@/context/data/context"
+import { useSession } from "next-auth/react"
+import { loadStripe } from "@stripe/stripe-js"
 
-type RadioButton = "bankTransfer" | "COD" | "mobilepay";
 
+export type RadioButton = "card" | "alipay" | "amazon_pay";
+
+const stripe = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLIC_KEY || "")
 
 export default function Checkout() {
 
-    const { cart} = useContext(productsData) || {};
+    const router = useRouter();
 
-    const totalPrice = cart?.reduce((acc, product) => acc + product.price * (product.quantity ?? 1), 0) || 0;
+    const { data: session } = useSession();
+
+    const { cart,setCart } = useContext(productsData) || {};
+
+    const [hydrated, setHydrated] = useState(false);
 
     const [radioSelect, setRadioSelect] = useState<RadioButton | null>(null)
 
+    useEffect(() => {
+        const storedCart = localStorage.getItem("cart");
+        if (storedCart && setCart) {
+            setCart(JSON.parse(storedCart));
+        }
+        setHydrated(true);
+    }, [setCart]);
+
+    if (!hydrated) return null;
+
+    const totalPrice = cart?.reduce((acc, product) => acc + product.price * (product.quantity ?? 1), 0) || 0;
 
     const handleRadio = (value: RadioButton) => {
         setRadioSelect(value)
     }
+
+    const handlePlaceOrder = async () => {
+        if (session) {
+            if (!cart || cart.length === 0) {
+                alert("Your cart is empty");
+                return;
+            }
+            
+            if (!radioSelect) {
+                alert("Please select a payment method");
+                return;
+            }
+
+            const stripeUI = await stripe;
+
+            const response = await fetch("/api/checkout", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    products: cart.map((item: Product) => ({
+                        product_name: item.product_name,
+                        description: item.description || "No description available",
+                        image_url: item.image_url,
+                        price: item.price * 10,
+                        quantity: item.quantity ?? 1,
+                    })),
+                    payment: radioSelect
+                }),
+            });
+
+            const data = await response.json();
+
+            if (data.sessionId) {
+                stripeUI?.redirectToCheckout({
+                    sessionId: data.sessionId,
+                });
+            } else {
+                console.error("Failed to get session ID");
+            }
+        }
+        else {
+            router.push("/account")
+        }
+    };
+
 
     return (
         <>
@@ -179,7 +245,7 @@ export default function Checkout() {
                     </div>
                     <div className="font-[500] text-[16px]">
                         <p className="sm:pb-2 lg:pb-6">
-                            ZIP code
+                            ZIP cashappe
                         </p>
                         <div className="font-[500] text-[16px] sm:h-[50px] sm:w-[209px] md:h-[75px] md:w-[450px] border-[2px] border-[#9f9f9f] rounded-xl">
                             <input
@@ -265,12 +331,12 @@ export default function Checkout() {
                             <div className="poppins">
                                 <div className=" my-0 pb-6">
                                     <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
-                                        <input type="radio" onChange={() => handleRadio("bankTransfer")} checked={radioSelect === "bankTransfer"} />
-                                        <p>Direct Bank Transfer</p>
+                                        <input type="radio" onChange={() => handleRadio("card")} checked={radioSelect === "card"} />
+                                        <p>Payment by Card</p>
                                     </div>
-                                    {radioSelect === "bankTransfer" && (
+                                    {radioSelect === "card" && (
                                         <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
-                                            Make your payment directly into our bank account. Please use your
+                                            Make your payment by card, it also supports google and apply pay .
                                             Order ID as the payment reference. Your order will not be shipped
                                             until the funds have cleared in our account.
                                         </p>
@@ -278,25 +344,24 @@ export default function Checkout() {
                                 </div>
                                 <div className=" my-0 pb-6">
                                     <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
-                                        <input type="radio" onChange={() => handleRadio("mobilepay")} checked={radioSelect === "mobilepay"} />
-                                        <p>Mobile Pay</p>
+                                        <input type="radio" onChange={() => handleRadio("amazon_pay")} checked={radioSelect === "amazon_pay"} />
+                                        <p>Amazon Pay</p>
                                     </div>
-                                    {radioSelect === "mobilepay" && (
+                                    {radioSelect === "amazon_pay" && (
                                         <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
-                                            Make your payment using any mobile and online payment service like google pay,
-                                            samsung pay, apple pay into our bank account. Please use yourOrder ID as the
+                                            Make your payment using Amazon pay into our bank account. Please use yourOrder ID as the
                                             payment reference. Your order will not be shipped until the funds have cleared in our account.
                                         </p>
                                     )}
                                 </div>
                                 <div className=" my-0 pb-6">
                                     <div className="pb-4 gap-4 flex items-center justify-start font-[400] sm:text-[14px] md:text-[16px]">
-                                        <input type="radio" onChange={() => handleRadio("COD")} checked={radioSelect === "COD"} />
-                                        <p>Cash On Delivery</p>
+                                        <input type="radio" onChange={() => handleRadio("alipay")} checked={radioSelect === "alipay"} />
+                                        <p>Ali Pay</p>
                                     </div>
-                                    {radioSelect === "COD" && (
+                                    {radioSelect === "alipay" && (
                                         <p className="text-[#9f9f9f] font-[300] sm:text-[14px] md:text-[16px] text-justify">
-                                            Make your payment directly when you recieve your order, feel free to check and
+                                            Make your payment via Ali Pay when you recieve your order, feel free to check and
                                             confirm your order to satisfy yourself. Please use your Order ID as the payment
                                             reference. Your order will not be shipped until the funds have cleared in our account.
                                         </p>
@@ -312,10 +377,12 @@ export default function Checkout() {
                                 </p>
                             </div>
                             <div className="py-4 flex items-center justify-center w-full">
-                                <Link href="/"><button className="border-[1px] border-[#000000] rounded-[12px] py-[15px] px-[90px]
+
+                                <button onClick={handlePlaceOrder} className="border-[1px] border-[#000000] rounded-[12px] py-[15px] px-[90px]
                                  mt-[6px] poppins font-[400] text-[20px]">
                                     Place order
-                                </button></Link>
+                                </button>
+
                             </div>
                         </div>
                     ) : (
