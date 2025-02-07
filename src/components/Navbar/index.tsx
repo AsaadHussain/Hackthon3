@@ -66,7 +66,7 @@ export default function Navbar({ isHome = false }: NavbarProps) {
                             isAuthenticated ? <li className=""><Link href="/adminA"><i className="fa-solid fa-screwdriver-wrench"></i></Link></li> : <li className=""><Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link></li>
                         }
 
-                        <li className=""><Link href="/wishList"><i className="fa-regular fa-heart"></i></Link></li>
+                        <li className=""><Link href="/"><i className="fa-regular fa-heart"></i></Link></li>
                         <li className=""><Link href="/cart"><i className="fa-solid fa-cart-shopping"></i></Link></li>
 
                     </ul>
@@ -96,7 +96,7 @@ export default function Navbar({ isHome = false }: NavbarProps) {
                             {
                                 isAuthenticated ? <Link href="/adminA"><i className="fa-solid fa-screwdriver-wrench"></i></Link> : <Link href="/shop"><i className="fa-solid fa-magnifying-glass"></i></Link>
                             }</li>
-                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/wishList"><i className="fa-regular fa-heart"></i></Link></li>
+                        <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/"><i className="fa-regular fa-heart"></i></Link></li>
                         <li className="px-2 py-1 hover:text-gray-300 cursor-pointer"><Link href="/cart"><i className="fa-solid fa-cart-shopping"></i></Link></li>
                     </ul>
                 </div>
