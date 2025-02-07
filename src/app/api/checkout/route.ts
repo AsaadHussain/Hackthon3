@@ -10,7 +10,7 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
 
 export async function POST(req: NextRequest) {
     try {
-        const { products, payment }: { products: Product[], payment : RadioButton } = await req.json();
+        const { products, payment }: { products: Product[], payment: RadioButton } = await req.json();
 
         if (!products || products.length === 0) {
             return NextResponse.json({ error: "No products in request" }, { status: 400 });
@@ -42,8 +42,14 @@ export async function POST(req: NextRequest) {
         console.log("Session ID:", session.id);
         return NextResponse.json({ sessionId: session.id });
 
-    } catch (error: any) {
+    } catch (error) {
         console.error("Stripe Checkout Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+
+        if (error instanceof Error) {
+            return NextResponse.json({ error: error.message }, { status: 500 });
+        } else {
+            return NextResponse.json({ error: "An unknown error occurred" }, { status: 500 });
+        }
     }
+
 }
